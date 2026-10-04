@@ -1,1 +1,52 @@
+name: AI Fotograaf Pro V2
 
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build AI Fotograaf Pro V2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository ophalen
+        uses: actions/checkout@v4
+
+      - name: Java 17 installeren
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle installeren
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: V2 ZIP uitpakken
+        run: |
+          mkdir -p build-source
+          unzip -o AI_Fotograaf_PRO_V2_FIXED_GitHub.zip -d build-source
+
+      - name: Android-project zoeken
+        run: |
+          echo "Zoeken naar settings.gradle..."
+          find build-source -name settings.gradle -o -name settings.gradle.kts
+
+      - name: APK bouwen
+        run: |
+          PROJECT_DIR=$(dirname "$(find build-source -name settings.gradle | head -n 1)")
+          echo "Project gevonden in: $PROJECT_DIR"
+          cd "$PROJECT_DIR"
+          gradle assembleDebug --no-daemon
+
+      - name: APK uploaden
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Fotograaf-Pro-V2-APK
+          path: |
+            build-source/**/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
