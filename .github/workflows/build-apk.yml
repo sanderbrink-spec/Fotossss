@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Repository ophalen
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Java 17
@@ -23,29 +23,22 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: ZIP uitpakken
-        run: |
-          mkdir project
-          unzip -q AI_Fotograaf_Pro*.zip -d project
-          find project -type f -maxdepth 3
-
-      - name: Android SDK controleren
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          ls "$ANDROID_HOME/platforms"
-          ls "$ANDROID_HOME/build-tools"
-
-      - name: Gradle installeren
+      - name: Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - name: APK bouwen
-        working-directory: project/AI_Fotograaf_Pro_GitHub_READY
+      - name: Android SDK
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Build APK
         run: gradle assembleDebug --stacktrace
 
-      - name: APK uploaden
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AI-Fotograaf-Pro-APK
-          path: project/AI_Fotograaf_Pro_GitHub_READY/app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
