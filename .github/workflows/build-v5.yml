@@ -28,13 +28,13 @@ jobs:
 
       - name: Controleer V5 ZIP
         run: |
-          test -f AI_Fotograaf_PRO_V5_Photos_by_Loes_FIXED_GitHub.zip
+        test -f AI_Fotograaf_PRO_V5_Photos_by_Loes_FINAL_GitHub.zip 
 
       - name: V5 project uitpakken
         run: |
           rm -rf v5-source
           mkdir v5-source
-          unzip -o AI_Fotograaf_PRO_V5_Photos_by_Loes_FIXED_GitHub.zip -d v5-source
+          unzip -o AI_Fotograaf_PRO_V5_Photos_by_Loes_FINAL_GitHub.zip -d v5-source 
 
       - name: Zoek Android project
         run: |
